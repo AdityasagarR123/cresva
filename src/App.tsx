@@ -696,9 +696,10 @@ const AdminPage = () => {
 const AboutPage = () => {
   // --- LOCAL IMAGE REFERENCES ---
   // Update these URLs when porting locally
+  // Place your images in the /public folder and name them madhav.jpg and aditya.jpg
   const IMAGES = {
-    MADHAV: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1974&auto=format&fit=crop",
-    ADITYA: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1974&auto=format&fit=crop"
+    MADHAV: "/madhav.jpg",
+    ADITYA: "/aditya.jpg"
   };
 
   const madhavServices = [
