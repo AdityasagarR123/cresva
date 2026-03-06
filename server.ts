@@ -63,19 +63,25 @@ const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadDir),
   filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname)
 });
-const upload = multer({ storage });
+const upload = multer({ 
+  storage,
+  limits: { fileSize: 300 * 1024 * 1024 } // 300MB limit
+});
 
 async function startServer() {
   const app = express();
   const PORT = 3000;
 
-  app.use(express.json());
+  app.use(express.json({ limit: '300mb' }));
+  app.use(express.urlencoded({ limit: '300mb', extended: true }));
   app.use("/uploads", express.static(uploadDir));
 
   // API Routes
   app.get("/api/works", (req, res) => {
+    console.log('GET /api/works requested');
     try {
       const works = db.prepare("SELECT * FROM works ORDER BY id DESC").all();
+      console.log(`Found ${works.length} works in DB`);
       const parsedWorks = works.map((w: any) => {
         let tags = [];
         try {
@@ -88,20 +94,26 @@ async function startServer() {
       });
       res.json(parsedWorks);
     } catch (error) {
+      console.error('Error fetching works:', error);
       res.status(500).json({ error: "Failed to fetch works" });
     }
   });
 
   app.post("/api/works", upload.fields([{ name: 'video', maxCount: 1 }, { name: 'thumbnail', maxCount: 1 }]), (req, res) => {
+    console.log('POST /api/works received');
     const { type, title, description, tags } = req.body;
     const files = req.files as { [fieldname: string]: Express.Multer.File[] };
     
+    console.log('Body:', { type, title, description, tags });
+    console.log('Files received:', Object.keys(files || {}));
+
     const videoUrl = files['video'] ? `/uploads/${files['video'][0].filename}` : req.body.videoUrl;
     const thumbnail = files['thumbnail'] ? `/uploads/${files['thumbnail'][0].filename}` : req.body.thumbnail;
 
     const tagsArray = typeof tags === 'string' ? tags.split(',').map(t => t.trim()) : tags;
 
     if (!type || !title || !description || !videoUrl || !thumbnail || !tagsArray) {
+      console.error('Missing fields:', { type, title, description, videoUrl, thumbnail, tagsArray });
       return res.status(400).json({ error: "Missing required fields" });
     }
 
@@ -111,8 +123,10 @@ async function startServer() {
         VALUES (?, ?, ?, ?, ?, ?)
       `);
       const result = stmt.run(type, title, description, videoUrl, thumbnail, JSON.stringify(tagsArray));
+      console.log('Successfully inserted work with ID:', result.lastInsertRowid);
       res.json({ id: result.lastInsertRowid, videoUrl, thumbnail });
     } catch (error) {
+      console.error('Error inserting work:', error);
       res.status(500).json({ error: "Failed to add work" });
     }
   });

@@ -525,13 +525,24 @@ const AdminPage = () => {
     if (videoFile) data.append('video', videoFile);
     if (thumbFile) data.append('thumbnail', thumbFile);
 
+    console.log('Submitting form data:', {
+      type: formData.type,
+      title: formData.title,
+      description: formData.description,
+      tags: formData.tags,
+      video: videoFile?.name,
+      thumbnail: thumbFile?.name
+    });
+
     try {
       const response = await fetch('/api/works', {
         method: 'POST',
         body: data
       });
+      console.log('Response status:', response.status);
       if (response.ok) {
         const result = await response.json();
+        console.log('Upload result:', result);
         const tagsArray = formData.tags.split(',').map(t => t.trim());
         setWorks([{ 
           id: result.id, 
@@ -546,9 +557,15 @@ const AdminPage = () => {
         setVideoFile(null);
         setThumbFile(null);
         alert('Project uploaded successfully!');
+        window.location.reload();
+      } else {
+        const errorData = await response.json();
+        console.error('Upload failed with error:', errorData);
+        alert(`Upload failed: ${errorData.error || 'Unknown error'}`);
       }
     } catch (error) {
-      alert('Upload failed');
+      console.error('Network or server error during upload:', error);
+      alert('Upload failed due to a network or server error.');
     } finally {
       setUploading(false);
     }
@@ -899,6 +916,7 @@ export default function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
+    document.title = "Cresva";
     const handleScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
