@@ -332,13 +332,17 @@ const ProofOfWorkPage: React.FC<ProofOfWorkPageProps> = ({ setCurrentPage }) => 
 
   useEffect(() => {
     fetch('/api/works')
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error('Network response was not ok');
+        return res.json();
+      })
       .then(data => {
+        console.log('Fetched works:', data);
         setWorks(data);
         setLoading(false);
       })
       .catch(err => {
-        console.error(err);
+        console.error('Fetch error:', err);
         setLoading(false);
       });
   }, []);

@@ -76,10 +76,16 @@ async function startServer() {
   app.get("/api/works", (req, res) => {
     try {
       const works = db.prepare("SELECT * FROM works ORDER BY id DESC").all();
-      const parsedWorks = works.map((w: any) => ({
-        ...w,
-        tags: JSON.parse(w.tags)
-      }));
+      const parsedWorks = works.map((w: any) => {
+        let tags = [];
+        try {
+          tags = JSON.parse(w.tags);
+        } catch (e) {
+          // Fallback for old data that might be comma-separated strings
+          tags = typeof w.tags === 'string' ? w.tags.split(',').map((t: string) => t.trim()) : [];
+        }
+        return { ...w, tags };
+      });
       res.json(parsedWorks);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch works" });
@@ -93,7 +99,9 @@ async function startServer() {
     const videoUrl = files['video'] ? `/uploads/${files['video'][0].filename}` : req.body.videoUrl;
     const thumbnail = files['thumbnail'] ? `/uploads/${files['thumbnail'][0].filename}` : req.body.thumbnail;
 
-    if (!type || !title || !description || !videoUrl || !thumbnail || !tags) {
+    const tagsArray = typeof tags === 'string' ? tags.split(',').map(t => t.trim()) : tags;
+
+    if (!type || !title || !description || !videoUrl || !thumbnail || !tagsArray) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
@@ -102,7 +110,7 @@ async function startServer() {
         INSERT INTO works (type, title, description, videoUrl, thumbnail, tags)
         VALUES (?, ?, ?, ?, ?, ?)
       `);
-      const result = stmt.run(type, title, description, videoUrl, thumbnail, typeof tags === 'string' ? tags : JSON.stringify(tags));
+      const result = stmt.run(type, title, description, videoUrl, thumbnail, JSON.stringify(tagsArray));
       res.json({ id: result.lastInsertRowid, videoUrl, thumbnail });
     } catch (error) {
       res.status(500).json({ error: "Failed to add work" });
