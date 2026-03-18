@@ -107,8 +107,8 @@ async function startServer() {
     console.log('Body:', { type, title, description, tags });
     console.log('Files received:', Object.keys(files || {}));
 
-    const videoUrl = files['video'] ? `/uploads/${files['video'][0].filename}` : req.body.videoUrl;
-    const thumbnail = files['thumbnail'] ? `/uploads/${files['thumbnail'][0].filename}` : req.body.thumbnail;
+    const videoUrl = files?.['video'] ? `/uploads/${files['video'][0].filename}` : req.body.videoUrl;
+    const thumbnail = files?.['thumbnail'] ? `/uploads/${files['thumbnail'][0].filename}` : req.body.thumbnail;
 
     const tagsArray = typeof tags === 'string' ? tags.split(',').map(t => t.trim()) : tags;
 
@@ -139,6 +139,12 @@ async function startServer() {
     } catch (error) {
       res.status(500).json({ error: "Failed to delete work" });
     }
+  });
+
+  // Global Error Handler to ensure JSON responses
+  app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+    console.error('Server Error:', err);
+    res.status(500).json({ error: err.message || "Internal server error" });
   });
 
   // Vite middleware for development
