@@ -717,9 +717,12 @@ const AdminPage = () => {
 // --- PAGES ---
 
 const AboutPage = () => {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const adityaRef = useRef<HTMLDivElement>(null);
+  const madhavRef = useRef<HTMLDivElement>(null);
+
   // --- LOCAL IMAGE REFERENCES ---
-  // Update these URLs when porting locally
-  // Place your images in the /public folder and name them madhav.jpg and aditya.jpg
   const IMAGES = {
     MADHAV: "/madhav.jpg",
     ADITYA: "/aditya.jpg"
@@ -737,95 +740,204 @@ const AboutPage = () => {
     { icon: <Zap size={20} />, title: "Performance", description: "Ensuring fast-loading, mobile-friendly platforms that work smoothly across all devices." }
   ];
 
+  useEffect(() => {
+    let ctx = { revert: () => {} };
+
+    const initGSAP = async () => {
+      try {
+        const { default: gsap } = await import('gsap');
+        const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+        gsap.registerPlugin(ScrollTrigger);
+
+        if (!sectionRef.current) return;
+
+        ctx = gsap.context(() => {
+          // Header reveal
+          gsap.fromTo('.about-header > *',
+            { y: 60, opacity: 0 },
+            { 
+              y: 0, opacity: 1, duration: 1.2, stagger: 0.15, ease: 'power4.out',
+              scrollTrigger: {
+                trigger: headerRef.current,
+                start: 'top 85%',
+              }
+            }
+          );
+
+          // Aditya Section Reveal
+          if (adityaRef.current) {
+            gsap.fromTo(adityaRef.current.querySelectorAll('.aditya-reveal'),
+              { opacity: 0, y: 50 },
+              { 
+                opacity: 1, y: 0, duration: 1, stagger: 0.1, ease: 'power3.out',
+                scrollTrigger: {
+                  trigger: adityaRef.current,
+                  start: 'top 75%',
+                }
+              }
+            );
+          }
+
+          // Madhav Section Reveal
+          if (madhavRef.current) {
+            gsap.fromTo(madhavRef.current.querySelectorAll('.madhav-reveal'),
+              { opacity: 0, y: 50 },
+              { 
+                opacity: 1, y: 0, duration: 1, stagger: 0.1, ease: 'power3.out',
+                scrollTrigger: {
+                  trigger: madhavRef.current,
+                  start: 'top 75%',
+                }
+              }
+            );
+          }
+
+          // Image Parallax Effect
+          gsap.utils.toArray('.img-parallax').forEach((img: any) => {
+            gsap.fromTo(img, 
+              { y: '-10%' },
+              {
+                y: '10%',
+                ease: 'none',
+                scrollTrigger: {
+                  trigger: img.parentElement,
+                  start: 'top bottom',
+                  end: 'bottom top',
+                  scrub: true
+                }
+              }
+            );
+          });
+        }, sectionRef);
+      } catch (err) {
+        console.error('GSAP initialization failed', err);
+      }
+    };
+
+    initGSAP();
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <div className="pt-40 pb-20 bg-[#999AC6] overflow-hidden relative min-h-screen">
+    <div ref={sectionRef} className="pt-40 pb-32 bg-[#999AC6] overflow-hidden relative min-h-screen font-sans">
+      {/* Aesthetic Background Elements */}
+      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+      <div className="absolute -top-[20%] right-[-10%] w-[800px] h-[800px] bg-[#C1F7DC]/10 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-white/10 blur-[100px] rounded-full pointer-events-none" />
+
       <div className="max-w-7xl mx-auto px-6 relative z-10 text-white">
-        <div className="text-center mb-20">
-          <span className="font-black tracking-[0.4em] text-[11px] uppercase mb-6 block drop-shadow-sm">THE ARCHITECTS</span>
-          <h2 className="text-6xl md:text-8xl font-black mb-8 tracking-tighter italic uppercase leading-none text-white">Engineering Influence</h2>
-          <p className="text-xl opacity-90 max-w-3xl mx-auto font-light leading-relaxed">Cresva was founded by two engineers who realized that the gap between technical logic and visual storytelling is where growth happens.</p>
+        
+        {/* Header */}
+        <div ref={headerRef} className="about-header text-center mb-32">
+          <span className="inline-block px-5 py-2 border border-white/20 rounded-full font-black tracking-[0.3em] text-[10px] uppercase mb-8 bg-white/5 backdrop-blur-md shadow-xl text-white">
+            The Architects
+          </span>
+          <h2 className="text-5xl md:text-7xl lg:text-[7rem] font-black mb-6 tracking-tighter uppercase leading-[0.9] text-white">
+            Engineering<br />
+            <span className="text-[#C1F7DC] italic font-serif lowercase tracking-tight opacity-90">Influence</span>
+          </h2>
+          <p className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto font-light leading-relaxed mt-10">
+            Cresva was founded by two engineers who realized that the gap between technical logic and visual storytelling is where exponential growth happens.
+          </p>
         </div>
 
-        <div className="space-y-16">
-          {/* Madhav Section */}
-          <div className="flex flex-col lg:flex-row gap-8 items-start">
-            {/* Madhav Photo */}
-            <motion.div 
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="relative group flex-shrink-0"
-            >
-              <div className="absolute inset-0 border-2 border-white/30 rounded-2xl -m-2 transition-all duration-500 group-hover:border-white/50" />
-              <div className="relative z-10 rounded-xl overflow-hidden w-32 h-32 bg-white/10 shadow-2xl">
-                <img 
-                  src={IMAGES.MADHAV} 
-                  alt="Madhav" 
-                  className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" 
-                  referrerPolicy="no-referrer" 
-                />
-              </div>
-            </motion.div>
-
-            {/* Madhav Details */}
-            <div className="flex-grow space-y-8">
-              <div className="bg-white/10 p-8 rounded-[32px] border border-white/20 backdrop-blur-md">
-                <div className="mb-4">
-                  <h3 className="text-2xl font-black uppercase italic text-[#C1F7DC]">Madhav</h3>
-                  <p className="text-white font-black uppercase tracking-widest text-[10px] opacity-60">Design & Motion Engineer</p>
-                </div>
-                <h4 className="text-[#C1F7DC] font-black text-[10px] uppercase tracking-widest mb-2 italic opacity-80">Abilities & Speciality</h4>
-                <p className="text-white/80 text-base font-medium leading-relaxed">
-                  Graphic Designer and Video Editor with a background in Engineering. Madhav approaches visual storytelling as a system, bridging the gap between technical logic and bold aesthetic impact.
-                </p>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {madhavServices.map((s, i) => (
-                  <ServiceItem key={i} {...s} delay={i * 0.1} />
-                ))}
-              </div>
+        <div className="space-y-40">
+          
+          {/* ADITYA SECTION (FIRST) */}
+          <div ref={adityaRef} className="flex flex-col lg:flex-row gap-16 items-center lg:items-center relative">
+            <div className="aditya-reveal absolute -left-12 lg:-left-20 top-0 text-[12rem] lg:text-[18rem] font-black text-white/5 pointer-events-none select-none z-0 leading-none">
+              01
             </div>
-          </div>
-
-          {/* Aditya Section */}
-          <div className="flex flex-col lg:flex-row-reverse gap-8 items-start">
-            {/* Aditya Photo */}
-            <motion.div 
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="relative group flex-shrink-0"
-            >
-              <div className="absolute inset-0 border-2 border-white/30 rounded-2xl -m-2 transition-all duration-500 group-hover:border-white/50" />
-              <div className="relative z-10 rounded-xl overflow-hidden w-32 h-32 bg-white/10 shadow-2xl">
+            
+            <div className="aditya-reveal relative group flex-shrink-0 w-full max-w-md lg:w-[450px] z-10">
+              <div className="absolute inset-0 bg-[#C1F7DC] translate-x-4 translate-y-4 rounded-[40px] transition-all duration-500 ease-out group-hover:translate-x-6 group-hover:translate-y-6" />
+              <div className="relative rounded-[40px] overflow-hidden aspect-[4/5] bg-[#0D0D15] border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
                 <img 
                   src={IMAGES.ADITYA} 
                   alt="Aditya" 
-                  className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700" 
+                  className="img-parallax w-full h-[120%] object-cover opacity-80 group-hover:opacity-100 transition-all duration-700 hover:scale-105" 
                   referrerPolicy="no-referrer" 
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D15]/90 via-[#0D0D15]/20 to-transparent opacity-80" />
               </div>
-            </motion.div>
+            </div>
 
-            {/* Aditya Details */}
-            <div className="flex-grow space-y-8">
-              <div className="bg-white/10 p-8 rounded-[32px] border border-white/20 backdrop-blur-md lg:text-right">
-                <div className="mb-4">
-                  <h3 className="text-2xl font-black uppercase italic text-[#C1F7DC]">Aditya</h3>
-                  <p className="text-white font-black uppercase tracking-widest text-[10px] opacity-60">Full-Stack & Systems Engineer</p>
+            <div className="flex-grow space-y-10 lg:pl-8 z-10 w-full">
+              <div className="aditya-reveal mb-6">
+                <div className="flex items-center gap-6 mb-6">
+                  <h3 className="text-5xl md:text-6xl font-black uppercase text-white tracking-tighter shadow-sm">Aditya</h3>
+                  <div className="h-[2px] w-16 bg-[#C1F7DC] hidden md:block" />
                 </div>
-                <h4 className="text-[#C1F7DC] font-black text-[10px] uppercase tracking-widest mb-2 italic opacity-80">Bio & Systems Engineering</h4>
-                <p className="text-white/80 text-base font-medium leading-relaxed">
-                  Full-Stack Developer and Digital Solutions Builder. Aditya focuses on the infrastructure of growth, creating clean, practical, and high-performance systems that convert users into loyal customers.
+                <div className="inline-block px-4 py-1.5 bg-[#C1F7DC]/10 border border-[#C1F7DC]/30 text-[#C1F7DC] font-black uppercase tracking-[0.2em] text-[10px] rounded-lg mb-6 shadow-sm">
+                  Full-Stack & Systems Engineer
+                </div>
+                <p className="text-white/90 text-[1.1rem] font-medium leading-relaxed max-w-xl">
+                  Full-stack developer and digital solutions builder. Aditya focuses on the infrastructure of growth, creating clean, practical, and high-performance systems that convert users into loyal customers.
                 </p>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              
+              <div className="aditya-reveal grid grid-cols-1 md:grid-cols-2 gap-5 max-w-2xl">
                 {adityaServices.map((s, i) => (
-                  <ServiceItem key={i} {...s} delay={i * 0.1} />
+                  <div key={i} className="group bg-white/5 border border-white/10 p-6 rounded-[24px] hover:bg-white/10 hover:border-[#C1F7DC]/40 transition-all duration-300 backdrop-blur-sm shadow-xl">
+                    <div className="text-[#C1F7DC] mb-5 bg-[#C1F7DC]/10 w-14 h-14 flex items-center justify-center rounded-2xl group-hover:scale-110 group-hover:bg-[#C1F7DC] group-hover:text-[#0D0D15] transition-all duration-300">
+                      {s.icon}
+                    </div>
+                    <h4 className="font-black text-white uppercase tracking-tight mb-2 text-sm">{s.title}</h4>
+                    <p className="text-white/60 text-xs leading-relaxed font-medium">{s.description}</p>
+                  </div>
                 ))}
               </div>
             </div>
           </div>
+
+          {/* MADHAV SECTION (SECOND) */}
+          <div ref={madhavRef} className="flex flex-col lg:flex-row-reverse gap-16 items-center lg:items-center relative">
+            <div className="madhav-reveal absolute -right-12 lg:-right-20 top-0 text-[12rem] lg:text-[18rem] font-black text-white/5 pointer-events-none select-none z-0 leading-none">
+              02
+            </div>
+
+            <div className="madhav-reveal relative group flex-shrink-0 w-full max-w-md lg:w-[450px] z-10">
+              <div className="absolute inset-0 bg-white translate-x-4 translate-y-4 rounded-[40px] transition-all duration-500 ease-out group-hover:translate-x-6 group-hover:translate-y-6" />
+              <div className="relative rounded-[40px] overflow-hidden aspect-[4/5] bg-[#0D0D15] border border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.3)]">
+                <img 
+                  src={IMAGES.MADHAV} 
+                  alt="Madhav" 
+                  className="img-parallax w-full h-[120%] object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700 hover:scale-105" 
+                  referrerPolicy="no-referrer" 
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D15]/90 via-[#0D0D15]/20 to-transparent opacity-80" />
+              </div>
+            </div>
+
+            <div className="flex-grow space-y-10 lg:pr-8 lg:text-right z-10 w-full">
+              <div className="madhav-reveal mb-6 flex flex-col lg:items-end">
+                <div className="flex items-center gap-6 mb-6 justify-end flex-row-reverse lg:flex-row">
+                  <div className="h-[2px] w-16 bg-white hidden md:block" />
+                  <h3 className="text-5xl md:text-6xl font-black uppercase text-white tracking-tighter shadow-sm">Madhav</h3>
+                </div>
+                <div className="inline-block px-4 py-1.5 bg-white/10 border border-white/30 text-white font-black uppercase tracking-[0.2em] text-[10px] rounded-lg mb-6 shadow-sm shadow-white/5">
+                  Design & Motion Engineer
+                </div>
+                <p className="text-white/90 text-[1.1rem] font-medium leading-relaxed max-w-xl">
+                  Graphic designer and video editor with a background in engineering. Madhav approaches visual storytelling as a system, bridging the gap between technical logic and bold aesthetic impact.
+                </p>
+              </div>
+              
+              <div className="madhav-reveal grid grid-cols-1 md:grid-cols-2 gap-5 max-w-2xl ml-auto text-left">
+                {madhavServices.map((s, i) => (
+                  <div key={i} className="group bg-white/5 border border-white/10 p-6 rounded-[24px] hover:bg-white/10 hover:border-white/40 transition-all duration-300 backdrop-blur-sm shadow-xl">
+                    <div className="text-white mb-5 bg-white/10 w-14 h-14 flex items-center justify-center rounded-2xl group-hover:scale-110 group-hover:bg-white group-hover:text-[#0D0D15] transition-all duration-300">
+                      {s.icon}
+                    </div>
+                    <h4 className="font-black text-white uppercase tracking-tight mb-2 text-sm">{s.title}</h4>
+                    <p className="text-white/60 text-xs leading-relaxed font-medium">{s.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
