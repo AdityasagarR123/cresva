@@ -42,6 +42,7 @@ import {
   Crown
 } from "lucide-react";
 import { motion, useScroll, useTransform, useInView, useSpring, AnimatePresence } from "framer-motion";
+import { portfolioData, getYouTubeID } from './data/portfolio';
 
 /**
  * BRAND PALETTE:
@@ -313,43 +314,15 @@ const ServiceItem: React.FC<ServiceItemProps> = ({ icon, title, description, del
 
 // --- PROOF OF WORK ---
 
-interface Work {
-  id: number;
-  type: string;
-  title: string;
-  description: string;
-  videoUrl: string;
-  thumbnail: string;
-  tags: string[];
-}
-
 interface ProofOfWorkPageProps {
   setCurrentPage: (page: string) => void;
 }
 
 const ProofOfWorkPage: React.FC<ProofOfWorkPageProps> = ({ setCurrentPage }) => {
   const [filter, setFilter] = useState('all');
-  const [works, setWorks] = useState<Work[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [activeVideo, setActiveVideo] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetch('/api/works')
-      .then(res => {
-        if (!res.ok) throw new Error('Network response was not ok');
-        return res.json();
-      })
-      .then(data => {
-        console.log('Fetched works:', data);
-        setWorks(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error('Fetch error:', err);
-        setLoading(false);
-      });
-  }, []);
-
-  const filteredWorks = filter === 'all' ? works : works.filter(w => w.type === filter);
+  const filteredWorks = filter === 'all' ? portfolioData : portfolioData.filter(w => w.type === filter);
 
   return (
     <div className="pt-40 pb-32 bg-[#0D0D15] min-h-screen relative overflow-hidden">
@@ -402,11 +375,7 @@ const ProofOfWorkPage: React.FC<ProofOfWorkPageProps> = ({ setCurrentPage }) => 
         </div>
 
         {/* Grid */}
-        {loading ? (
-          <div className="flex justify-center py-20">
-            <div className="w-12 h-12 border-4 border-[#C1F7DC] border-t-transparent rounded-full animate-spin" />
-          </div>
-        ) : works.length === 0 ? (
+        {portfolioData.length === 0 ? (
           <div className="text-center py-20 text-[#999AC6]">
             <p>No projects uploaded yet.</p>
           </div>
@@ -423,31 +392,39 @@ const ProofOfWorkPage: React.FC<ProofOfWorkPageProps> = ({ setCurrentPage }) => 
                   transition={{ duration: 0.4, delay: idx * 0.05 }}
                   className="group relative bg-white/5 border border-white/10 rounded-[32px] overflow-hidden hover:border-[#C1F7DC]/30 transition-all duration-500"
                 >
-                  <div className="relative aspect-video overflow-hidden">
-                    <video 
-                      src={work.videoUrl} 
-                      poster={work.thumbnail}
-                      className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-700"
-                      muted
-                      loop
-                      onMouseOver={(e) => (e.target as HTMLVideoElement).play()}
-                      onMouseOut={(e) => {
-                        const video = e.target as HTMLVideoElement;
-                        video.pause();
-                        video.currentTime = 0;
-                      }}
-                    />
+                  <div 
+                    className="relative aspect-video overflow-hidden cursor-pointer bg-[#0D0D15] group"
+                    onMouseEnter={() => setActiveVideo(work.id)}
+                    onMouseLeave={() => setActiveVideo(null)}
+                    onClick={() => window.open(work.youtubeUrl, '_blank')}
+                  >
+                    {activeVideo === work.id && getYouTubeID(work.youtubeUrl) ? (
+                      <iframe
+                        src={`https://www.youtube.com/embed/${getYouTubeID(work.youtubeUrl)}?autoplay=1&mute=1&controls=0&modestbranding=1&loop=1&playlist=${getYouTubeID(work.youtubeUrl)}`}
+                        className="w-full h-[140%] -mt-[20%] pointer-events-none opacity-80"
+                        allow="autoplay; encrypted-media"
+                        frameBorder="0"
+                      />
+                    ) : (
+                      <img 
+                        src={`https://img.youtube.com/vi/${getYouTubeID(work.youtubeUrl) || ''}/maxresdefault.jpg`}
+                        className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-700"
+                        alt={work.title}
+                      />
+                    )}
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D15] via-transparent to-transparent pointer-events-none" />
-                    <div className="absolute top-6 left-6">
+                    <div className="absolute top-6 left-6 pointer-events-none">
                       <span className="px-3 py-1 bg-[#0D0D15]/80 backdrop-blur-md border border-white/10 rounded-full text-[9px] font-black uppercase tracking-widest text-[#C1F7DC]">
                         {work.type}
                       </span>
                     </div>
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-                      <div className="w-16 h-16 bg-[#C1F7DC] rounded-full flex items-center justify-center text-[#0D0D15] shadow-2xl">
-                        <Video size={24} />
+                    {activeVideo !== work.id && (
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+                        <div className="w-16 h-16 bg-[#C1F7DC] rounded-full flex items-center justify-center text-[#0D0D15] shadow-2xl">
+                          <Video size={24} />
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                   
                   <div className="p-8">
@@ -491,228 +468,7 @@ const ProofOfWorkPage: React.FC<ProofOfWorkPageProps> = ({ setCurrentPage }) => 
   );
 };
 
-// --- ADMIN PAGE ---
-
-const AdminPage = () => {
-  const [works, setWorks] = useState<Work[]>([]);
-  const [formData, setFormData] = useState({
-    type: 'website',
-    title: '',
-    description: '',
-    tags: ''
-  });
-  const [videoFile, setVideoFile] = useState<File | null>(null);
-  const [thumbFile, setThumbFile] = useState<File | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [password, setPassword] = useState('');
-  const [uploading, setUploading] = useState(false);
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      fetch('/api/works')
-        .then(res => res.json())
-        .then(setWorks);
-    }
-  }, [isLoggedIn]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setUploading(true);
-    
-    const data = new FormData();
-    data.append('type', formData.type);
-    data.append('title', formData.title);
-    data.append('description', formData.description);
-    data.append('tags', formData.tags);
-    if (videoFile) data.append('video', videoFile);
-    if (thumbFile) data.append('thumbnail', thumbFile);
-
-    console.log('Submitting form data:', {
-      type: formData.type,
-      title: formData.title,
-      description: formData.description,
-      tags: formData.tags,
-      video: videoFile?.name,
-      thumbnail: thumbFile?.name
-    });
-
-    try {
-      const response = await fetch('/api/works', {
-        method: 'POST',
-        body: data
-      });
-      console.log('Response status:', response.status);
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Upload result:', result);
-        const tagsArray = formData.tags.split(',').map(t => t.trim());
-        setWorks([{ 
-          id: result.id, 
-          type: formData.type, 
-          title: formData.title, 
-          description: formData.description, 
-          videoUrl: result.videoUrl, 
-          thumbnail: result.thumbnail, 
-          tags: tagsArray 
-        }, ...works]);
-        setFormData({ type: 'website', title: '', description: '', tags: '' });
-        setVideoFile(null);
-        setThumbFile(null);
-        alert('Project uploaded successfully!');
-        window.location.reload();
-      } else {
-        const errorData = await response.json();
-        console.error('Upload failed with error:', errorData);
-        alert(`Upload failed: ${errorData.error || 'Unknown error'}`);
-      }
-    } catch (error) {
-      console.error('Network or server error during upload:', error);
-      alert('Upload failed due to a network or server error.');
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const handleDelete = async (id: number) => {
-    if (confirm('Are you sure you want to delete this project?')) {
-      const response = await fetch(`/api/works/${id}`, { method: 'DELETE' });
-      if (response.ok) {
-        setWorks(works.filter(w => w.id !== id));
-      }
-    }
-  };
-
-  if (!isLoggedIn) {
-    return (
-      <div className="pt-64 pb-48 px-6 bg-[#0D0D15] min-h-screen flex items-center justify-center">
-        <div className="max-w-md w-full bg-white/5 border border-white/10 p-12 rounded-[40px] text-center">
-          <h2 className="text-3xl font-black text-white uppercase mb-8">Admin Access</h2>
-          <input 
-            type="password" 
-            placeholder="Enter Admin Password" 
-            className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white mb-6 outline-none focus:border-[#C1F7DC]"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button 
-            onClick={() => password === 'cresva2026' ? setIsLoggedIn(true) : alert('Incorrect Password')}
-            className="w-full py-4 bg-[#C1F7DC] text-[#0D0D15] rounded-2xl font-black uppercase"
-          >
-            Login
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="pt-40 pb-32 bg-[#0D0D15] min-h-screen px-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-end mb-16">
-          <div>
-            <span className="text-[#C1F7DC] font-black tracking-[0.4em] text-[11px] uppercase mb-4 block">Admin Panel</span>
-            <h2 className="text-5xl font-black text-white uppercase">Upload Work</h2>
-          </div>
-          <button onClick={() => setIsLoggedIn(false)} className="text-[#999AC6] font-black uppercase text-[10px] tracking-widest">Logout</button>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-          <form onSubmit={handleSubmit} className="space-y-6 bg-white/5 p-10 rounded-[40px] border border-white/10">
-            <div className="grid grid-cols-2 gap-4">
-              <button 
-                type="button"
-                onClick={() => setFormData({ ...formData, type: 'website' })}
-                className={`py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest border transition-all ${formData.type === 'website' ? 'bg-[#C1F7DC] text-[#0D0D15] border-[#C1F7DC]' : 'bg-transparent text-white border-white/10'}`}
-              >
-                Website
-              </button>
-              <button 
-                type="button"
-                onClick={() => setFormData({ ...formData, type: 'ad' })}
-                className={`py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest border transition-all ${formData.type === 'ad' ? 'bg-[#C1F7DC] text-[#0D0D15] border-[#C1F7DC]' : 'bg-transparent text-white border-white/10'}`}
-              >
-                Ad Campaign
-              </button>
-            </div>
-            <input 
-              type="text" 
-              placeholder="Project Title" 
-              className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white outline-none focus:border-[#C1F7DC]"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              required
-            />
-            <textarea 
-              placeholder="Description" 
-              rows={3}
-              className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white outline-none focus:border-[#C1F7DC]"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              required
-            />
-            <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase text-[#999AC6] tracking-widest ml-2">Video File (.mp4)</label>
-              <input 
-                type="file" 
-                accept="video/mp4"
-                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white outline-none focus:border-[#C1F7DC] file:bg-[#C1F7DC] file:border-none file:rounded-lg file:px-4 file:py-1 file:mr-4 file:text-[10px] file:font-black file:uppercase"
-                onChange={(e) => setVideoFile(e.target.files?.[0] || null)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase text-[#999AC6] tracking-widest ml-2">Thumbnail Image</label>
-              <input 
-                type="file" 
-                accept="image/*"
-                className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white outline-none focus:border-[#C1F7DC] file:bg-[#C1F7DC] file:border-none file:rounded-lg file:px-4 file:py-1 file:mr-4 file:text-[10px] file:font-black file:uppercase"
-                onChange={(e) => setThumbFile(e.target.files?.[0] || null)}
-                required
-              />
-            </div>
-            <input 
-              type="text" 
-              placeholder="Tags (comma separated: React, Node.js, etc.)" 
-              className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white outline-none focus:border-[#C1F7DC]"
-              value={formData.tags}
-              onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-              required
-            />
-            <button 
-              type="submit" 
-              disabled={uploading}
-              className={`w-full py-6 bg-[#C1F7DC] text-[#0D0D15] rounded-2xl font-black text-lg uppercase shadow-xl shadow-[#C1F7DC]/10 transition-all ${uploading ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.01]'}`}
-            >
-              {uploading ? 'Uploading...' : 'Publish to Portfolio'}
-            </button>
-          </form>
-
-          <div className="space-y-6">
-            <h3 className="text-2xl font-black text-white uppercase mb-8">Current Portfolio</h3>
-            <div className="space-y-4 max-h-[600px] overflow-y-auto pr-4 custom-scrollbar">
-              {works.map(work => (
-                <div key={work.id} className="flex items-center justify-between bg-white/5 p-6 rounded-3xl border border-white/10 group">
-                  <div className="flex items-center gap-4">
-                    <div className="w-16 h-10 rounded-lg overflow-hidden bg-white/10">
-                      <img src={work.thumbnail} className="w-full h-full object-cover" alt="" referrerPolicy="no-referrer" />
-                    </div>
-                    <div>
-                      <h4 className="text-white font-black uppercase text-sm">{work.title}</h4>
-                      <p className="text-[#999AC6] text-[10px] uppercase tracking-widest">{work.type}</p>
-                    </div>
-                  </div>
-                  <button onClick={() => handleDelete(work.id)} className="p-3 text-white/20 hover:text-[#F03A47] transition-colors">
-                    <X size={20} />
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+// --- ADMIN PAGE REMOVED ---
 
 // --- PAGES ---
 
@@ -1487,11 +1243,7 @@ export default function App() {
               <ProofOfWorkPage setCurrentPage={setCurrentPage} />
             </motion.div>
           )}
-          {currentPage === 'admin' && (
-            <motion.div key="admin" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <AdminPage />
-            </motion.div>
-          )}
+
           {currentPage === 'contact' && (
             <motion.div key="contact" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               <div className="pt-64 pb-48 px-6 bg-[#FEF6F4] min-h-screen text-center">
@@ -1534,7 +1286,6 @@ export default function App() {
             <span className="hover:text-[#C1F7DC] cursor-pointer transition-all">Instagram</span>
             <button onClick={() => setCurrentPage('work')} className="hover:text-[#C1F7DC] transition-all">Proof of Work</button>
             <button onClick={() => setCurrentPage('about')} className="hover:text-[#C1F7DC] transition-all">Founders</button>
-            <button onClick={() => setCurrentPage('admin')} className="hover:text-[#C1F7DC] transition-all opacity-0 hover:opacity-100">Admin</button>
           </div>
         </div>
       </footer>
