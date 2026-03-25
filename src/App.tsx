@@ -358,14 +358,14 @@ const ProofOfWorkPage: React.FC<ProofOfWorkPageProps> = ({ setCurrentPage }) => 
         </div>
 
         {/* Filters */}
-        <div className="flex justify-center gap-4 mb-16">
+        <div className="flex justify-start sm:justify-center gap-3 sm:gap-4 mb-14 overflow-x-auto pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] w-full snap-x">
           {['all', 'website', 'ad'].map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
+              className={`shrink-0 snap-center px-6 sm:px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all active:scale-95 ${
                 filter === f 
-                  ? 'bg-[#C1F7DC] text-[#0D0D15]' 
+                  ? 'bg-[#C1F7DC] text-[#0D0D15] shadow-[0_0_15px_rgba(193,247,220,0.3)]' 
                   : 'bg-white/5 text-[#999AC6] hover:bg-white/10 border border-white/10'
               }`}
             >
@@ -390,7 +390,7 @@ const ProofOfWorkPage: React.FC<ProofOfWorkPageProps> = ({ setCurrentPage }) => 
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.4, delay: idx * 0.05 }}
-                  className="group relative bg-white/5 border border-white/10 rounded-[32px] overflow-hidden hover:border-[#C1F7DC]/30 transition-all duration-500"
+                  className="group relative bg-white/[0.03] border border-white/10 rounded-[32px] overflow-hidden hover:border-[#C1F7DC]/30 hover:bg-white/[0.05] active:scale-[0.98] transition-all duration-500 shadow-xl"
                 >
                   <div 
                     className="relative aspect-video overflow-hidden cursor-pointer bg-[#0D0D15] group"
@@ -419,24 +419,25 @@ const ProofOfWorkPage: React.FC<ProofOfWorkPageProps> = ({ setCurrentPage }) => 
                       </span>
                     </div>
                     {activeVideo !== work.id && (
-                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-                        <div className="w-16 h-16 bg-[#C1F7DC] rounded-full flex items-center justify-center text-[#0D0D15] shadow-2xl">
-                          <Video size={24} />
+                      <div className="absolute inset-0 flex items-center justify-center opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-black/20 sm:bg-transparent">
+                        <div className="w-14 h-14 sm:w-16 sm:h-16 bg-[#C1F7DC] rounded-full flex items-center justify-center text-[#0D0D15] shadow-[0_0_30px_rgba(193,247,220,0.5)]">
+                          <Video size={20} className="sm:hidden" />
+                          <Video size={24} className="hidden sm:block" />
                         </div>
                       </div>
                     )}
                   </div>
                   
-                  <div className="p-8">
-                    <h3 className="text-xl font-black text-white uppercase tracking-tight mb-2 group-hover:text-[#C1F7DC] transition-colors">
+                  <div className="p-6 sm:p-8">
+                    <h3 className="text-lg sm:text-xl font-black text-white uppercase tracking-tight mb-2 group-hover:text-[#C1F7DC] transition-colors">
                       {work.title}
                     </h3>
-                    <p className="text-sm text-[#999AC6] font-medium leading-relaxed mb-6">
+                    <p className="text-xs sm:text-sm text-[#999AC6] font-medium leading-relaxed mb-6">
                       {work.description}
                     </p>
                     <div className="flex flex-wrap gap-2">
                       {work.tags.map(tag => (
-                        <span key={tag} className="text-[9px] font-black uppercase tracking-widest text-white/40 border border-white/5 px-2 py-1 rounded-md">
+                        <span key={tag} className="text-[9px] font-black uppercase tracking-widest text-[#C1F7DC]/80 border border-white/10 bg-white/5 shadow-sm px-2 py-1 rounded-md">
                           {tag}
                         </span>
                       ))}
@@ -875,31 +876,37 @@ const HomePageContent: React.FC<HomePageContentProps> = ({ setCurrentPage }) => 
       right: 0;
       height: 1px;
       background: linear-gradient(90deg, transparent, var(--card-accent, #C1F7DC), transparent);
-      opacity: 0;
+      opacity: 0.15;
       transition: opacity 0.5s ease;
     }
-    .engine-card:hover::before {
-      opacity: 0.5;
+    .engine-card:hover::before, .engine-card:active::before {
+      opacity: 0.6;
     }
-    .engine-card:hover {
-      transform: translateY(-8px);
-      border-color: rgba(193, 247, 220, 0.15);
-      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4), 0 0 60px var(--card-glow, rgba(193, 247, 220, 0.04));
+    .engine-card:hover, .engine-card:active {
+      transform: translateY(-8px) scale(0.98);
+      border-color: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 40px var(--card-glow, rgba(255,255,255, 0.05));
     }
-    .engine-card:hover .engine-icon {
-      transform: scale(1.15) rotate(-5deg);
+    .engine-card:hover .engine-icon, .engine-card:active .engine-icon {
+      transform: scale(1.1) rotate(-5deg);
     }
-    .engine-card:hover .engine-arrow {
+    .engine-card:hover .engine-arrow, .engine-card:active .engine-arrow {
       opacity: 1;
       transform: translateX(0);
     }
     .engine-icon {
-      transition: all 0.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+      transition: all 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
     }
     .engine-arrow {
       opacity: 0;
       transform: translateX(-8px);
       transition: all 0.4s ease;
+    }
+    @media (max-width: 640px) {
+      .engine-arrow {
+        opacity: 1;
+        transform: translateX(0);
+      }
     }
     .glass-card {
       background: rgba(255, 255, 255, 0.03);
@@ -940,8 +947,8 @@ const HomePageContent: React.FC<HomePageContentProps> = ({ setCurrentPage }) => 
         <div className="absolute bottom-[15%] right-[8%] w-[400px] h-[400px] bg-[#F03A47]/[0.03] blur-[180px] rounded-full pointer-events-none" />
 
         {/* ═══════════ GLASSMORPHISM HERO ═══════════ */}
-        <div className="relative z-10 mx-auto max-w-7xl px-6 pt-28 pb-16 md:pt-40 md:pb-24">
-          <div className="grid grid-cols-1 gap-16 lg:grid-cols-12 lg:gap-10 items-start">
+        <div className="relative z-10 mx-auto max-w-7xl px-6 pt-28 pb-14 md:pt-40 md:pb-24">
+          <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-10 items-start">
             
             {/* --- LEFT COLUMN (Copy) --- */}
             <div className="lg:col-span-7 flex flex-col justify-center space-y-8 pt-8 lg:pr-8">
@@ -977,10 +984,10 @@ const HomePageContent: React.FC<HomePageContentProps> = ({ setCurrentPage }) => 
               </p>
 
               {/* CTA Buttons */}
-              <div className="engine-hero-animate flex flex-col sm:flex-row gap-4 pt-4">
+              <div className="engine-hero-animate flex flex-col sm:flex-row gap-4 pt-4 w-full sm:w-auto">
                 <button 
                   onClick={() => setCurrentPage('work')}
-                  className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-[#C1F7DC] px-8 py-4 text-sm font-black uppercase tracking-widest text-[#0D0D15] transition-all hover:scale-[1.02] hover:bg-white hover:shadow-[0_0_30px_rgba(193,247,220,0.3)] min-w-[200px]"
+                  className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-[#C1F7DC] px-8 py-4 text-xs sm:text-sm font-black uppercase tracking-widest text-[#0D0D15] transition-all active:scale-[0.98] hover:scale-[1.02] hover:bg-white hover:shadow-[0_0_30px_rgba(193,247,220,0.3)] w-full sm:w-auto"
                 >
                   View Portfolio
                   <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -988,7 +995,7 @@ const HomePageContent: React.FC<HomePageContentProps> = ({ setCurrentPage }) => 
                 
                 <button 
                   onClick={() => setCurrentPage('contact')}
-                  className="group inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-8 py-4 text-sm font-black uppercase tracking-widest text-white backdrop-blur-sm transition-all hover:bg-white/10 hover:border-white/20 min-w-[200px]"
+                  className="group inline-flex items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/5 px-8 py-4 text-xs sm:text-sm font-black uppercase tracking-widest text-white backdrop-blur-sm transition-all active:scale-[0.98] hover:bg-white/10 hover:border-white/20 w-full sm:w-auto"
                 >
                   <Rocket className="w-4 h-4 text-[#F03A47]" />
                   Scale Your Brand
@@ -1002,7 +1009,7 @@ const HomePageContent: React.FC<HomePageContentProps> = ({ setCurrentPage }) => 
               {/* Stats Card */}
               <div 
                 ref={statsCardRef}
-                className="glass-card relative overflow-hidden rounded-[32px] border border-white/10 p-8 shadow-2xl"
+                className="glass-card relative overflow-hidden rounded-[32px] border border-white/10 p-6 sm:p-8 shadow-2xl"
               >
                 {/* Internal Card Glow Element */}
                 <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-[#C1F7DC]/10 blur-3xl pointer-events-none" />
@@ -1032,20 +1039,20 @@ const HomePageContent: React.FC<HomePageContentProps> = ({ setCurrentPage }) => 
                   <div className="h-px w-full bg-gradient-to-r from-transparent via-white/10 to-transparent mb-6" />
 
                   {/* Mini Stats Grid */}
-                  <div className="grid grid-cols-3 gap-4 text-center">
-                    <div className="flex flex-col items-center">
-                      <span className="text-xl font-black text-white">1</span>
-                      <span className="text-[9px] uppercase tracking-widest text-white/40 mt-1">Ecosystem</span>
+                  <div className="grid grid-cols-3 gap-2 sm:gap-4 text-center">
+                    <div className="flex flex-col items-center justify-center">
+                      <span className="text-lg sm:text-xl font-black text-white">1</span>
+                      <span className="text-[7.5px] sm:text-[9px] uppercase tracking-widest text-white/40 mt-1">Ecosystem</span>
                     </div>
                     <div className="w-px h-full bg-white/10 mx-auto" />
-                    <div className="flex flex-col items-center">
-                      <span className="text-xl font-black text-white">24/7</span>
-                      <span className="text-[9px] uppercase tracking-widest text-white/40 mt-1">Automation</span>
+                    <div className="flex flex-col items-center justify-center">
+                      <span className="text-lg sm:text-xl font-black text-white">24/7</span>
+                      <span className="text-[7.5px] sm:text-[9px] uppercase tracking-widest text-white/40 mt-1">Automation</span>
                     </div>
                     <div className="w-px h-full bg-white/10 mx-auto" />
-                    <div className="flex flex-col items-center">
-                      <span className="text-xl font-black text-white">100%</span>
-                      <span className="text-[9px] uppercase tracking-widest text-white/40 mt-1">Ownership</span>
+                    <div className="flex flex-col items-center justify-center">
+                      <span className="text-lg sm:text-xl font-black text-white">100%</span>
+                      <span className="text-[7.5px] sm:text-[9px] uppercase tracking-widest text-white/40 mt-1">Ownership</span>
                     </div>
                   </div>
 
@@ -1118,34 +1125,40 @@ const HomePageContent: React.FC<HomePageContentProps> = ({ setCurrentPage }) => 
               <div
                 key={idx}
                 ref={el => cardsRef.current[idx] = el}
-                className="engine-card group bg-white/[0.02] border border-white/5 p-8 rounded-3xl"
+                className="engine-card group relative bg-white/[0.02] border border-white/5 p-6 sm:p-8 rounded-3xl active:scale-[0.98] transition-transform duration-300"
                 style={{ 
                   '--card-accent': feature.accent,
                   '--card-glow': `${feature.accent}15`
                 } as React.CSSProperties}
               >
-                <div className="flex justify-between items-start mb-10">
+                {/* Subtle persistent mobile glow */}
+                <div 
+                  className="absolute inset-0 rounded-3xl opacity-20 sm:opacity-0 group-hover:opacity-100 mix-blend-screen pointer-events-none transition-opacity duration-500"
+                  style={{ background: `radial-gradient(circle at 50% 100%, ${feature.accent}15 0%, transparent 60%)` }}
+                />
+
+                <div className="relative z-10 flex justify-between items-start mb-8 sm:mb-10">
                   <div 
-                    className="engine-icon w-12 h-12 rounded-2xl flex items-center justify-center bg-white/5 border border-white/10 group-hover:bg-white/10 group-hover:border-[var(--card-accent)]"
+                    className="engine-icon w-12 h-12 rounded-2xl flex items-center justify-center bg-white/5 border border-white/10 group-hover:bg-white/10 group-hover:border-[var(--card-accent)] group-active:border-[var(--card-accent)] shadow-[0_0_15px_rgba(255,255,255,0.02)] transition-all"
                     style={{ color: feature.accent }}
                   >
                     <feature.icon className="w-5 h-5" />
                   </div>
-                  <span className="text-[10px] font-black opacity-20 text-white font-mono">
+                  <span className="text-[10px] font-black opacity-30 text-white font-mono">
                     {String(idx + 1).padStart(2, '0')}
                   </span>
                 </div>
                 
-                <h4 className="text-lg font-black text-white uppercase mb-3 leading-tight">
+                <h4 className="relative z-10 text-base sm:text-lg font-black text-white uppercase mb-2 sm:mb-3 leading-tight group-active:text-[var(--card-accent)] transition-colors">
                   {feature.title}
                 </h4>
-                <p className="text-sm text-white/40 font-medium leading-relaxed mb-6 h-16">
+                <p className="relative z-10 text-xs sm:text-sm text-white/40 font-medium leading-relaxed mb-6 h-auto sm:h-16">
                   {feature.description}
                 </p>
 
-                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300" style={{ color: feature.accent }}>
+                <div className="relative z-10 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] opacity-100 sm:opacity-0 translate-y-0 sm:translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 mt-2 sm:mt-0" style={{ color: feature.accent }}>
                   <span>Explore</span>
-                  <ArrowRight className="engine-arrow w-3 h-3" />
+                  <ArrowRight className="engine-arrow w-3 h-3 opacity-100 sm:opacity-0" />
                 </div>
               </div>
             ))}
