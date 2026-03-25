@@ -19,16 +19,16 @@ export const portfolioData: PortfolioProject[] = [
   {
     id: '2',
     type: 'ad',
-    title: 'Summer Collection Launch',
+    title: 'adshoot for cafe',
     description: 'Viral short-form ad campaign that generated 500k+ local impressions in 14 days.',
-    youtubeUrl: 'https://youtu.be/dQw4w9WgXcQ', // Replace with your Unlisted YouTube URL
+    youtubeUrl: 'https://youtube.com/shorts/sWFFewNpdWk?si=aYCI9f42V-EtRuRQ', // Replace with your Unlisted YouTube URL
     tags: ['Motion Graphics', 'Meta Ads', 'Viral Strategy']
   }
 ];
 
 // Helper to extract YouTube Video ID
 export const getYouTubeID = (url: string) => {
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
   const match = url.match(regExp);
   return (match && match[2].length === 11) ? match[2] : null;
 };
