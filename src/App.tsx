@@ -221,9 +221,6 @@ const Hero: React.FC<HeroProps> = ({ onContactClick, onEcosystemClick }) => {
             <button onClick={onContactClick} className="group px-10 py-5 bg-[#C1F7DC] hover:bg-white text-[#0D0D15] rounded-full font-black text-base transition-all shadow-2xl shadow-[#C1F7DC]/10 flex items-center gap-3 active:scale-95">
               Scale Your Brand <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </button>
-            <button onClick={onEcosystemClick} className="px-10 py-5 bg-white/5 border border-white/10 hover:border-[#C1F7DC]/30 text-white rounded-full font-black text-base backdrop-blur-sm transition-all active:scale-95">
-              Explore Ecosystem
-            </button>
           </motion.div>
         </div>
       </div>
@@ -745,6 +742,69 @@ const AboutPage = () => {
   );
 };
 
+const EventsPage = () => {
+  return (
+    <div className="pt-32 pb-32 bg-[#FAF9F6] min-h-screen relative overflow-hidden font-sans">
+      {/* Massive Background Text */}
+      <div className="absolute top-10 left-0 right-0 w-full overflow-hidden pointer-events-none select-none z-0 flex justify-center">
+        <span className="text-[28vw] font-black leading-[0.8] tracking-tighter text-[#DFFF00] whitespace-nowrap opacity-60 mix-blend-multiply">
+          MAGAZINE<br />EVENTS
+        </span>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 relative z-10 pt-16">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-24 gap-8">
+          <div className="max-w-2xl bg-white/70 backdrop-blur-md p-8 rounded-3xl border border-black/5 shadow-2xl shadow-black/5">
+            <span className="inline-block px-5 py-2 border border-black rounded-full font-black tracking-widest text-[10px] uppercase mb-6 bg-[#DFFF00] text-black">
+              Experiential Performance
+            </span>
+            <h2 className="text-5xl md:text-7xl font-black mb-6 tracking-tighter uppercase leading-[0.9] text-black">
+              Curating<br />
+              <span className="italic font-serif lowercase tracking-tight">Memorable Experiences</span>
+            </h2>
+            <p className="text-xl md:text-2xl text-black/70 font-bold leading-relaxed max-w-lg tracking-tight">
+              We provide premium musical bands and flawlessly organize events that leave a lasting impact on your audience.
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 auto-rows-[400px]">
+          {/* Magazine Grid Items */}
+          {[
+            { tag: "Live Music", title: "Premium Musical Bands for Special Occasions", date: "April 2026", img: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=800&auto=format&fit=crop" },
+            { tag: "Events", title: "Corporate Galas & Launch Events Designed to Perfection", date: "May 2026", img: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=800&auto=format&fit=crop", span: "md:col-span-2 lg:col-span-2 lg:row-span-2" },
+            { tag: "Experience", title: "Curated Audiovisual Productions That Command Attention", date: "June 2026", img: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=800&auto=format&fit=crop" },
+            { tag: "Strategy", title: "Planning the Flow: How We Keep Audiences Engaged", date: "July 2026", img: "https://images.unsplash.com/photo-1470229722913-7c090be5c520?q=80&w=800&auto=format&fit=crop" },
+            { tag: "Production", title: "State-of-the-Art Sound & Lighting Operations", date: "August 2026", img: "https://images.unsplash.com/photo-1506157786151-b8491531f063?q=80&w=800&auto=format&fit=crop" },
+          ].map((item, idx) => (
+             <motion.div 
+               key={idx}
+               initial={{ opacity: 0, y: 20 }}
+               whileInView={{ opacity: 1, y: 0 }}
+               viewport={{ once: true }}
+               transition={{ delay: idx * 0.1 }}
+               className={`group cursor-pointer ${item.span || ''}`}
+             >
+               <div className="w-full h-full relative overflow-hidden bg-white flex flex-col justify-end p-6 border-4 border-transparent hover:border-[#DFFF00] shadow-xl shadow-black/5 hover:shadow-2xl transition-all duration-300">
+                 <img src={item.img} alt={item.title} className="absolute inset-0 w-full h-full object-cover mix-blend-luminosity opacity-80 group-hover:mix-blend-normal group-hover:scale-105 transition-all duration-700" />
+                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+                 
+                 <div className="relative z-10 max-w-sm">
+                   <div className="text-black font-black text-[10px] uppercase tracking-widest mb-3 bg-[#DFFF00] self-start px-3 py-1 inline-block rounded-sm">
+                     {item.tag}
+                   </div>
+                   <h3 className="text-white font-black text-2xl md:text-3xl leading-none mb-3 group-hover:opacity-100 transition-colors uppercase tracking-tighter">{item.title}</h3>
+                   <span className="text-white/60 text-[10px] font-bold uppercase tracking-widest border-t border-white/20 pt-2 block">{item.date}</span>
+                 </div>
+               </div>
+             </motion.div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 interface HomePageContentProps {
   setCurrentPage: (page: string) => void;
 }
@@ -1259,6 +1319,7 @@ export default function App() {
             <button onClick={() => setCurrentPage('home')} className={`text-[10px] font-black uppercase tracking-[0.4em] transition-all ${currentPage === 'home' ? 'text-[#C1F7DC]' : 'text-[#999AC6] hover:text-[#C1F7DC]'}`}>Home</button>
             <button onClick={() => setCurrentPage('about')} className={`text-[10px] font-black uppercase tracking-[0.4em] transition-all ${currentPage === 'about' ? 'text-[#C1F7DC]' : 'text-[#999AC6] hover:text-[#C1F7DC]'}`}>About</button>
             <button onClick={() => setCurrentPage('work')} className={`text-[10px] font-black uppercase tracking-[0.4em] transition-all ${currentPage === 'work' ? 'text-[#C1F7DC]' : 'text-[#999AC6] hover:text-[#C1F7DC]'}`}>Work</button>
+            <button onClick={() => setCurrentPage('events')} className={`text-[10px] font-black uppercase tracking-[0.4em] transition-all ${currentPage === 'events' ? 'text-[#C1F7DC]' : 'text-[#999AC6] hover:text-[#C1F7DC]'}`}>Events</button>
           </div>
           <button onClick={() => setCurrentPage('contact')} className={`hidden sm:block border-2 border-[#C1F7DC] text-[#C1F7DC] hover:bg-[#C1F7DC] hover:text-[#0D0D15] px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${currentPage === 'contact' ? 'bg-[#C1F7DC] text-[#0D0D15]' : ''}`}>Partnership</button>
           <button className="md:hidden text-white" onClick={() => setMobileOpen(!mobileOpen)}>{mobileOpen ? <X size={24} /> : <MenuIcon size={24} />}</button>
@@ -1276,6 +1337,7 @@ export default function App() {
                 <button onClick={() => setCurrentPage('home')} className="text-left text-white font-black uppercase tracking-widest text-sm">Home</button>
                 <button onClick={() => setCurrentPage('about')} className="text-left text-white font-black uppercase tracking-widest text-sm">About</button>
                 <button onClick={() => setCurrentPage('work')} className="text-left text-white font-black uppercase tracking-widest text-sm">Work</button>
+                <button onClick={() => setCurrentPage('events')} className="text-left text-white font-black uppercase tracking-widest text-sm">Events</button>
                 <button onClick={() => setCurrentPage('contact')} className="text-left text-[#C1F7DC] font-black uppercase tracking-widest text-sm">Partnership</button>
               </div>
             </motion.div>
@@ -1300,6 +1362,11 @@ export default function App() {
               <ProofOfWorkPage setCurrentPage={setCurrentPage} />
             </motion.div>
           )}
+          {currentPage === 'events' && (
+            <motion.div key="events" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <EventsPage />
+            </motion.div>
+          )}
 
           {currentPage === 'contact' && (
             <motion.div key="contact" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
@@ -1309,10 +1376,10 @@ export default function App() {
                 <div className="flex flex-col md:flex-row items-center justify-center gap-8 mb-16 text-[#0D0D15] font-black uppercase tracking-widest text-xs">
                   <a href="tel:+919971972652" className="flex items-center gap-3 hover:text-[#F03A47] transition-all"><Phone size={16} className="text-[#F03A47]" /> +91 99719 72652</a>
                   <a href="tel:+917011516021" className="flex items-center gap-3 hover:text-[#F03A47] transition-all"><Phone size={16} className="text-[#F03A47]" /> +91 70115 16021</a>
-                  <a href="mailto:madhav.cresva@gmail.com" className="flex items-center gap-3 hover:text-[#F03A47] transition-all"><Mail size={16} className="text-[#F03A47]" /> madhav.cresva@gmail.com</a>
+                  <a href="mailto:marhavffs@gmail.com" className="flex items-center gap-3 hover:text-[#F03A47] transition-all"><Mail size={16} className="text-[#F03A47]" /> marhavffs@gmail.com</a>
                 </div>
 
-                <form action="mailto:madhav.cresva@gmail.com" method="post" encType="text/plain" className="max-w-4xl mx-auto bg-white border border-[#FCC8B2]/30 p-12 rounded-[40px] space-y-6 text-left shadow-2xl">
+                <form action="mailto:marhavffs@gmail.com" method="post" encType="text/plain" className="max-w-4xl mx-auto bg-white border border-[#FCC8B2]/30 p-12 rounded-[40px] space-y-6 text-left shadow-2xl">
                   <input type="text" name="Business" placeholder="Brand Name" className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-[#0D0D15] focus:border-[#F03A47] outline-none transition-all" />
                   <input type="email" name="Email" placeholder="Founder Email" className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-[#0D0D15] focus:border-[#F03A47] outline-none transition-all" />
                   <textarea name="Goals" placeholder="Describe your growth goals..." rows={5} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-[#0D0D15] focus:border-[#F03A47] outline-none transition-all" />
@@ -1343,6 +1410,7 @@ export default function App() {
             <span className="hover:text-[#C1F7DC] cursor-pointer transition-all">Instagram</span>
             <button onClick={() => setCurrentPage('work')} className="hover:text-[#C1F7DC] transition-all">Proof of Work</button>
             <button onClick={() => setCurrentPage('about')} className="hover:text-[#C1F7DC] transition-all">Founders</button>
+            <button onClick={() => setCurrentPage('events')} className="hover:text-[#C1F7DC] transition-all">Events</button>
           </div>
         </div>
       </footer>
