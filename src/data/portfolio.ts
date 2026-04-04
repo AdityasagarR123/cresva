@@ -1,9 +1,10 @@
 export interface PortfolioProject {
   id: string;
-  type: 'website' | 'ad';
+  type: 'website' | 'ad' | 'showcase';
   title: string;
   description: string;
-  youtubeUrl: string;
+  youtubeUrl?: string;
+  websiteUrl?: string;
   tags: string[];
 }
 
@@ -25,6 +26,40 @@ export const portfolioData: PortfolioProject[] = [
     tags: ['Motion Graphics', 'Meta Ads', 'Viral Strategy']
   }
 ];
+
+// ─── WEBSITE SHOWCASE ───
+// Dedicated interface for website-only entries.
+// Add your website URLs here — they'll auto-appear in the Portfolio page.
+export interface WebsiteShowcase {
+  id: string;
+  title: string;
+  description: string;
+  websiteUrl: string;
+  tags: string[];
+}
+
+export const websiteShowcaseData: WebsiteShowcase[] = [
+  {
+    id: 's1',
+    title: "oncro ai",
+    description: "AI-powered analytics platform for small businesses.",
+    websiteUrl: "https://projectredkoenigsegg.netlify.app/",
+    tags: ["React", "AI", "Analytics"],
+  },
+];
+
+// Auto-map websiteShowcaseData → PortfolioProject[] for the renderer
+export const showcaseData: PortfolioProject[] = websiteShowcaseData.map((site) => ({
+  id: site.id,
+  type: 'showcase' as const,
+  title: site.title,
+  description: site.description,
+  websiteUrl: site.websiteUrl,
+  tags: site.tags,
+}));
+
+// Combined data for the portfolio page
+export const allPortfolioData: PortfolioProject[] = [...portfolioData, ...showcaseData];
 
 // Helper to extract YouTube Video ID
 export const getYouTubeID = (url: string) => {

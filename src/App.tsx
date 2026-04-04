@@ -33,6 +33,7 @@ import {
   Plus,
   Minus,
   Video,
+  ExternalLink,
   Code2,
   Cpu,
   Monitor,
@@ -42,7 +43,7 @@ import {
   Crown
 } from "lucide-react";
 import { motion, useScroll, useTransform, useInView, useSpring, AnimatePresence } from "framer-motion";
-import { portfolioData, getYouTubeID } from './data/portfolio';
+import { allPortfolioData, getYouTubeID } from './data/portfolio';
 
 /**
  * BRAND PALETTE:
@@ -322,7 +323,7 @@ const ProofOfWorkPage: React.FC<ProofOfWorkPageProps> = ({ setCurrentPage }) => 
   const [filter, setFilter] = useState('all');
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
 
-  const filteredWorks = filter === 'all' ? portfolioData : portfolioData.filter(w => w.type === filter);
+  const filteredWorks = filter === 'all' ? allPortfolioData : allPortfolioData.filter(w => w.type === filter);
 
   return (
     <div className="pt-40 pb-32 bg-[#0D0D15] min-h-screen relative overflow-hidden">
@@ -359,7 +360,7 @@ const ProofOfWorkPage: React.FC<ProofOfWorkPageProps> = ({ setCurrentPage }) => 
 
         {/* Filters */}
         <div className="flex justify-start sm:justify-center gap-3 sm:gap-4 mb-14 overflow-x-auto pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] w-full snap-x">
-          {['all', 'website', 'ad'].map((f) => (
+          {['all', 'website', 'ad', 'showcase'].map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
@@ -369,13 +370,13 @@ const ProofOfWorkPage: React.FC<ProofOfWorkPageProps> = ({ setCurrentPage }) => 
                   : 'bg-white/5 text-[#999AC6] hover:bg-white/10 border border-white/10'
               }`}
             >
-              {f === 'all' ? 'Everything' : f === 'website' ? 'Digital Architecture' : 'Performance Ads'}
+              {f === 'all' ? 'Everything' : f === 'website' ? 'Digital Architecture' : f === 'ad' ? 'Performance Ads' : 'Website Showcase'}
             </button>
           ))}
         </div>
 
         {/* Grid */}
-        {portfolioData.length === 0 ? (
+        {allPortfolioData.length === 0 ? (
           <div className="text-center py-20 text-[#999AC6]">
             <p>No projects uploaded yet.</p>
           </div>
@@ -392,41 +393,84 @@ const ProofOfWorkPage: React.FC<ProofOfWorkPageProps> = ({ setCurrentPage }) => 
                   transition={{ duration: 0.4, delay: idx * 0.05 }}
                   className="group relative bg-white/[0.03] border border-white/10 rounded-[32px] overflow-hidden hover:border-[#C1F7DC]/30 hover:bg-white/[0.05] active:scale-[0.98] transition-all duration-500 shadow-xl"
                 >
-                  <div 
-                    className="relative aspect-video overflow-hidden cursor-pointer bg-[#0D0D15] group"
-                    onMouseEnter={() => setActiveVideo(work.id)}
-                    onMouseLeave={() => setActiveVideo(null)}
-                    onClick={() => window.open(work.youtubeUrl, '_blank')}
-                  >
-                    {activeVideo === work.id && getYouTubeID(work.youtubeUrl) ? (
-                      <iframe
-                        src={`https://www.youtube.com/embed/${getYouTubeID(work.youtubeUrl)}?autoplay=1&mute=1&controls=0&modestbranding=1&loop=1&playlist=${getYouTubeID(work.youtubeUrl)}`}
-                        className="w-full h-[140%] -mt-[20%] pointer-events-none opacity-80"
-                        allow="autoplay; encrypted-media"
-                        frameBorder="0"
-                      />
-                    ) : (
-                      <img 
-                        src={`https://img.youtube.com/vi/${getYouTubeID(work.youtubeUrl) || ''}/maxresdefault.jpg`}
-                        className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-700"
-                        alt={work.title}
-                      />
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D15] via-transparent to-transparent pointer-events-none" />
-                    <div className="absolute top-6 left-6 pointer-events-none">
-                      <span className="px-3 py-1 bg-[#0D0D15]/80 backdrop-blur-md border border-white/10 rounded-full text-[9px] font-black uppercase tracking-widest text-[#C1F7DC]">
-                        {work.type}
-                      </span>
-                    </div>
-                    {activeVideo !== work.id && (
-                      <div className="absolute inset-0 flex items-center justify-center opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-black/20 sm:bg-transparent">
-                        <div className="w-14 h-14 sm:w-16 sm:h-16 bg-[#C1F7DC] rounded-full flex items-center justify-center text-[#0D0D15] shadow-[0_0_30px_rgba(193,247,220,0.5)]">
-                          <Video size={20} className="sm:hidden" />
-                          <Video size={24} className="hidden sm:block" />
+                  {/* ───── SHOWCASE CARD ───── */}
+                  {work.type === 'showcase' && work.websiteUrl ? (
+                    <>
+                      <div 
+                        className="relative aspect-video overflow-hidden cursor-pointer bg-[#0D0D15] group"
+                        onMouseEnter={() => setActiveVideo(work.id)}
+                        onMouseLeave={() => setActiveVideo(null)}
+                        onClick={() => window.open(work.websiteUrl, '_blank')}
+                      >
+                        {activeVideo === work.id ? (
+                          <iframe
+                            src={work.websiteUrl}
+                            className="w-full h-full pointer-events-none opacity-90 scale-100"
+                            title={work.title}
+                            sandbox="allow-scripts allow-same-origin"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-br from-[#0D0D15] via-[#999AC6]/20 to-[#C1F7DC]/10 flex items-center justify-center">
+                            <div className="text-center">
+                              <Globe className="w-10 h-10 text-[#C1F7DC]/40 mx-auto mb-3" />
+                              <span className="text-[10px] font-black uppercase tracking-widest text-white/30">Hover to Preview</span>
+                            </div>
+                          </div>
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D15] via-transparent to-transparent pointer-events-none" />
+                        <div className="absolute top-6 left-6 pointer-events-none">
+                          <span className="px-3 py-1 bg-[#0D0D15]/80 backdrop-blur-md border border-white/10 rounded-full text-[9px] font-black uppercase tracking-widest text-[#C1F7DC]">
+                            showcase
+                          </span>
                         </div>
+                        {activeVideo !== work.id && (
+                          <div className="absolute inset-0 flex items-center justify-center opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-black/20 sm:bg-transparent">
+                            <div className="w-14 h-14 sm:w-16 sm:h-16 bg-[#C1F7DC] rounded-full flex items-center justify-center text-[#0D0D15] shadow-[0_0_30px_rgba(193,247,220,0.5)]">
+                              <ExternalLink size={20} className="sm:hidden" />
+                              <ExternalLink size={24} className="hidden sm:block" />
+                            </div>
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
+                    </>
+                  ) : (
+                    /* ───── VIDEO CARD (website / ad) ───── */
+                    <div 
+                      className="relative aspect-video overflow-hidden cursor-pointer bg-[#0D0D15] group"
+                      onMouseEnter={() => setActiveVideo(work.id)}
+                      onMouseLeave={() => setActiveVideo(null)}
+                      onClick={() => window.open(work.youtubeUrl, '_blank')}
+                    >
+                      {activeVideo === work.id && work.youtubeUrl && getYouTubeID(work.youtubeUrl) ? (
+                        <iframe
+                          src={`https://www.youtube.com/embed/${getYouTubeID(work.youtubeUrl)}?autoplay=1&mute=1&controls=0&modestbranding=1&loop=1&playlist=${getYouTubeID(work.youtubeUrl)}`}
+                          className="w-full h-[140%] -mt-[20%] pointer-events-none opacity-80"
+                          allow="autoplay; encrypted-media"
+                          frameBorder="0"
+                        />
+                      ) : (
+                        <img 
+                          src={`https://img.youtube.com/vi/${(work.youtubeUrl && getYouTubeID(work.youtubeUrl)) || ''}/maxresdefault.jpg`}
+                          className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-700"
+                          alt={work.title}
+                        />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0D0D15] via-transparent to-transparent pointer-events-none" />
+                      <div className="absolute top-6 left-6 pointer-events-none">
+                        <span className="px-3 py-1 bg-[#0D0D15]/80 backdrop-blur-md border border-white/10 rounded-full text-[9px] font-black uppercase tracking-widest text-[#C1F7DC]">
+                          {work.type}
+                        </span>
+                      </div>
+                      {activeVideo !== work.id && (
+                        <div className="absolute inset-0 flex items-center justify-center opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-black/20 sm:bg-transparent">
+                          <div className="w-14 h-14 sm:w-16 sm:h-16 bg-[#C1F7DC] rounded-full flex items-center justify-center text-[#0D0D15] shadow-[0_0_30px_rgba(193,247,220,0.5)]">
+                            <Video size={20} className="sm:hidden" />
+                            <Video size={24} className="hidden sm:block" />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                   
                   <div className="p-6 sm:p-8">
                     <h3 className="text-lg sm:text-xl font-black text-white uppercase tracking-tight mb-2 group-hover:text-[#C1F7DC] transition-colors">
