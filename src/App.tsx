@@ -37,10 +37,14 @@ import {
   Code2,
   Cpu,
   Monitor,
-  Phone,
-  Mail,
   Target,
-  Crown
+  Crown,
+  Home,
+  User,
+  Briefcase,
+  Calendar,
+  Phone,
+  Mail
 } from "lucide-react";
 import { motion, useScroll, useTransform, useInView, useSpring, AnimatePresence } from "framer-motion";
 import { allPortfolioData, getYouTubeID } from './data/portfolio';
@@ -193,7 +197,7 @@ const Hero: React.FC<HeroProps> = ({ onContactClick, onEcosystemClick }) => {
   return (
     <div className="relative w-full h-screen overflow-hidden bg-[#0D0D15]">
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full object-cover touch-none opacity-70" />
-      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pt-28 text-white px-6 text-center">
+      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pt-16 md:pt-28 text-white px-6 text-center">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
           <div className="flex items-center gap-2 px-6 py-2 bg-[#C1F7DC]/10 backdrop-blur-md border border-[#C1F7DC]/20 rounded-full text-[10px] font-black tracking-[0.4em] text-[#C1F7DC] uppercase">
             Cresva Performance Agency
@@ -271,12 +275,12 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ icon: Icon, title, descriptio
     <div className="star-diagonal top-[50%] left-[-10%]" style={{ animationDelay: '4s' }}></div>
 
     <div className="relative z-10 w-full flex flex-col items-center">
-      <div className="relative w-14 h-14 flex items-center justify-center mb-6">
-        <div className="absolute inset-0 bg-[#F03A47]/5 rounded-2xl group-hover:bg-[#F03A47] transition-all duration-500" />
-        <Icon className="relative z-10 w-6 h-6 text-[#F03A47] group-hover:text-white transition-colors duration-500" />
+      <div className="relative w-10 h-10 sm:w-14 sm:h-14 flex items-center justify-center mb-4 sm:mb-6">
+        <div className="absolute inset-0 bg-[#F03A47]/5 rounded-xl sm:rounded-2xl group-hover:bg-[#F03A47] transition-all duration-500" />
+        <Icon className="relative z-10 w-4 h-4 sm:w-6 sm:h-6 text-[#F03A47] group-hover:text-white transition-colors duration-500" />
       </div>
-      <h3 className="text-base font-black text-[#0D0D15] mb-2 tracking-tighter group-hover:text-[#F03A47] transition-colors uppercase leading-tight">{title}</h3>
-      <p className="text-[#0D0D15]/60 text-[11px] font-medium leading-relaxed group-hover:text-[#0D0D15] transition-all">{description}</p>
+      <h3 className="text-xs sm:text-base font-black text-[#0D0D15] mb-1 sm:mb-2 tracking-tighter group-hover:text-[#F03A47] transition-colors uppercase leading-tight line-clamp-1">{title}</h3>
+      <p className="text-[#0D0D15]/60 text-[9px] sm:text-[11px] font-medium leading-tight sm:leading-relaxed group-hover:text-[#0D0D15] transition-all line-clamp-2">{description}</p>
     </div>
   </motion.div>
 );
@@ -323,7 +327,7 @@ const ProofOfWorkPage: React.FC<ProofOfWorkPageProps> = ({ setCurrentPage }) => 
   const filteredWorks = filter === 'all' ? allPortfolioData : allPortfolioData.filter(w => w.type === filter);
 
   return (
-    <div className="pt-40 pb-32 bg-[#0D0D15] min-h-screen relative overflow-hidden">
+    <div className="pt-24 pb-32 bg-[#0D0D15] min-h-screen relative overflow-hidden">
       {/* Background Accents */}
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#C1F7DC]/5 blur-[150px] rounded-full pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#F03A47]/5 blur-[150px] rounded-full pointer-events-none" />
@@ -378,7 +382,7 @@ const ProofOfWorkPage: React.FC<ProofOfWorkPageProps> = ({ setCurrentPage }) => 
             <p>No projects uploaded yet.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
             <AnimatePresence mode="popLayout">
               {filteredWorks.map((work, idx) => (
                 <motion.div
@@ -469,16 +473,16 @@ const ProofOfWorkPage: React.FC<ProofOfWorkPageProps> = ({ setCurrentPage }) => 
                     </div>
                   )}
                   
-                  <div className="p-6 sm:p-8">
-                    <h3 className="text-lg sm:text-xl font-black text-white uppercase tracking-tight mb-2 group-hover:text-[#C1F7DC] transition-colors">
+                  <div className="p-4 sm:p-8">
+                    <h3 className="text-sm sm:text-xl font-black text-white uppercase tracking-tight mb-1 sm:mb-2 group-hover:text-[#C1F7DC] transition-colors line-clamp-1">
                       {work.title}
                     </h3>
-                    <p className="text-xs sm:text-sm text-[#999AC6] font-medium leading-relaxed mb-6">
+                    <p className="text-[9px] sm:text-sm text-[#999AC6] font-medium leading-tight sm:leading-relaxed mb-3 sm:mb-6 line-clamp-2">
                       {work.description}
                     </p>
-                    <div className="flex flex-wrap gap-2">
-                      {work.tags.map(tag => (
-                        <span key={tag} className="text-[9px] font-black uppercase tracking-widest text-[#C1F7DC]/80 border border-white/10 bg-white/5 shadow-sm px-2 py-1 rounded-md">
+                    <div className="flex flex-wrap gap-1 sm:gap-2">
+                      {work.tags.slice(0, 2).map(tag => (
+                        <span key={tag} className="text-[7px] sm:text-[9px] font-black uppercase tracking-widest text-[#C1F7DC]/80 border border-white/10 bg-white/5 shadow-sm px-1.5 py-0.5 rounded-md">
                           {tag}
                         </span>
                       ))}
@@ -618,7 +622,7 @@ const AboutPage = () => {
   }, []);
 
   return (
-    <div ref={sectionRef} className="pt-40 pb-32 bg-[#999AC6] overflow-hidden relative min-h-screen font-sans">
+    <div ref={sectionRef} className="pt-24 pb-32 bg-[#999AC6] overflow-hidden relative min-h-screen font-sans">
       {/* Aesthetic Background Elements */}
       <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
       <div className="absolute -top-[20%] right-[-10%] w-[800px] h-[800px] bg-[#C1F7DC]/10 blur-[120px] rounded-full pointer-events-none" />
@@ -744,7 +748,7 @@ const AboutPage = () => {
 
 const EventsPage = () => {
   return (
-    <div className="pt-32 pb-32 bg-[#FAF9F6] min-h-screen relative overflow-hidden font-sans">
+    <div className="pt-20 pb-32 bg-[#FAF9F6] min-h-screen relative overflow-hidden font-sans">
       {/* Massive Background Text */}
       <div className="absolute top-10 left-0 right-0 w-full overflow-hidden pointer-events-none select-none z-0 flex justify-center">
         <span className="text-[28vw] font-black leading-[0.8] tracking-tighter text-[#DFFF00] whitespace-nowrap opacity-60 mix-blend-multiply">
@@ -768,7 +772,7 @@ const EventsPage = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 auto-rows-[400px]">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 auto-rows-[300px] sm:auto-rows-[400px]">
           {/* Magazine Grid Items */}
           {[
             { tag: "Live Music", title: "Premium Musical Bands for Special Occasions", date: "April 2026", img: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=800&auto=format&fit=crop" },
@@ -1004,7 +1008,7 @@ const HomePageContent: React.FC<HomePageContentProps> = ({ setCurrentPage }) => 
     .engine-arrow {
       opacity: 0;
       transform: translateX(-8px);
-      transition: all 0.4s ease;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
     @media (max-width: 640px) {
       .engine-arrow {
@@ -1051,7 +1055,7 @@ const HomePageContent: React.FC<HomePageContentProps> = ({ setCurrentPage }) => 
         <div className="absolute bottom-[15%] right-[8%] w-[400px] h-[400px] bg-[#F03A47]/[0.03] blur-[180px] rounded-full pointer-events-none" />
 
         {/* ═══════════ GLASSMORPHISM HERO ═══════════ */}
-        <div className="relative z-10 mx-auto max-w-7xl px-6 pt-28 pb-14 md:pt-40 md:pb-24">
+        <div className="relative z-10 mx-auto max-w-7xl px-6 pt-14 pb-14 md:pt-40 md:pb-24">
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-10 items-start">
             
             {/* --- LEFT COLUMN (Copy) --- */}
@@ -1224,7 +1228,7 @@ const HomePageContent: React.FC<HomePageContentProps> = ({ setCurrentPage }) => 
             <div className="h-px bg-white/20 w-16" />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-center">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 justify-center">
             {businessFeatures.map((feature, idx) => (
               <div
                 key={idx}
@@ -1253,10 +1257,10 @@ const HomePageContent: React.FC<HomePageContentProps> = ({ setCurrentPage }) => 
                   </span>
                 </div>
                 
-                <h4 className="relative z-10 text-base sm:text-lg font-black text-white uppercase mb-2 sm:mb-3 leading-tight group-active:text-[var(--card-accent)] transition-colors">
+                <h4 className="relative z-10 text-[11px] sm:text-lg font-black text-white uppercase mb-1 sm:mb-3 leading-tight group-active:text-[var(--card-accent)] transition-colors line-clamp-1">
                   {feature.title}
                 </h4>
-                <p className="relative z-10 text-xs sm:text-sm text-white/40 font-medium leading-relaxed mb-6 h-auto sm:h-16">
+                <p className="relative z-10 text-[9px] sm:text-sm text-white/40 font-medium leading-tight sm:leading-relaxed mb-4 sm:mb-6 h-10 sm:h-16 line-clamp-2">
                   {feature.description}
                 </p>
 
@@ -1309,40 +1313,51 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-white font-sans selection:bg-[#F03A47] selection:text-white overflow-x-hidden">
-      <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ${scrolled ? 'bg-[#0D0D15]/90 backdrop-blur-xl border-b border-white/5 py-4 shadow-xl' : 'bg-transparent py-8'}`}>
+      {/* DESKTOP NAV */}
+      <nav className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 hidden md:block ${scrolled ? 'bg-[#0D0D15]/90 backdrop-blur-xl border-b border-white/5 py-4 shadow-xl' : 'bg-transparent py-8'}`}>
         <div className="max-w-7xl mx-auto px-8 flex items-center justify-between">
           <div className="flex items-center gap-3 cursor-pointer group" onClick={() => setCurrentPage('home')}>
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black italic text-lg text-[#0D0D15] bg-[#C1F7DC] group-hover:rotate-6 transition-all duration-500 ${currentPage === 'about' ? 'bg-white' : ''}`}>C</div>
             <span className="font-bold text-xl tracking-tighter text-white uppercase tracking-widest">Cresva</span>
           </div>
-          <div className="hidden md:flex items-center gap-12">
+          <div className="flex items-center gap-12">
             <button onClick={() => setCurrentPage('home')} className={`text-[10px] font-black uppercase tracking-[0.4em] transition-all ${currentPage === 'home' ? 'text-[#C1F7DC]' : 'text-[#999AC6] hover:text-[#C1F7DC]'}`}>Home</button>
             <button onClick={() => setCurrentPage('about')} className={`text-[10px] font-black uppercase tracking-[0.4em] transition-all ${currentPage === 'about' ? 'text-[#C1F7DC]' : 'text-[#999AC6] hover:text-[#C1F7DC]'}`}>About</button>
             <button onClick={() => setCurrentPage('work')} className={`text-[10px] font-black uppercase tracking-[0.4em] transition-all ${currentPage === 'work' ? 'text-[#C1F7DC]' : 'text-[#999AC6] hover:text-[#C1F7DC]'}`}>Work</button>
             <button onClick={() => setCurrentPage('events')} className={`text-[10px] font-black uppercase tracking-[0.4em] transition-all ${currentPage === 'events' ? 'text-[#C1F7DC]' : 'text-[#999AC6] hover:text-[#C1F7DC]'}`}>Events</button>
           </div>
-          <button onClick={() => setCurrentPage('contact')} className={`hidden sm:block border-2 border-[#C1F7DC] text-[#C1F7DC] hover:bg-[#C1F7DC] hover:text-[#0D0D15] px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${currentPage === 'contact' ? 'bg-[#C1F7DC] text-[#0D0D15]' : ''}`}>Partnership</button>
-          <button className="md:hidden text-white" onClick={() => setMobileOpen(!mobileOpen)}>{mobileOpen ? <X size={24} /> : <MenuIcon size={24} />}</button>
+          <button onClick={() => setCurrentPage('contact')} className={`border-2 border-[#C1F7DC] text-[#C1F7DC] hover:bg-[#C1F7DC] hover:text-[#0D0D15] px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${currentPage === 'contact' ? 'bg-[#C1F7DC] text-[#0D0D15]' : ''}`}>Partnership</button>
         </div>
-        
-        <AnimatePresence>
-          {mobileOpen && (
-            <motion.div 
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="md:hidden bg-[#0D0D15] border-b border-white/10 overflow-hidden"
+      </nav>
+
+      {/* MOBILE BOTTOM NAV */}
+      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] md:hidden w-[92%] max-w-sm">
+        <div className="bg-[#0D0D15]/80 backdrop-blur-2xl border border-white/10 rounded-2xl p-2 shadow-2xl flex items-center justify-around">
+          {[
+            { id: 'home', icon: Home, label: 'Home' },
+            { id: 'about', icon: User, label: 'About' },
+            { id: 'work', icon: Briefcase, label: 'Work' },
+            { id: 'events', icon: Calendar, label: 'Events' },
+            { id: 'contact', icon: MessageSquare, label: 'Contact' }
+          ].map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setCurrentPage(item.id)}
+              className={`flex flex-col items-center gap-1.5 p-2 rounded-xl transition-all duration-300 ${
+                currentPage === item.id 
+                  ? 'bg-[#C1F7DC] text-[#0D0D15] px-4' 
+                  : 'text-[#999AC6] hover:text-white'
+              }`}
             >
-              <div className="flex flex-col p-8 gap-6">
-                <button onClick={() => setCurrentPage('home')} className="text-left text-white font-black uppercase tracking-widest text-sm">Home</button>
-                <button onClick={() => setCurrentPage('about')} className="text-left text-white font-black uppercase tracking-widest text-sm">About</button>
-                <button onClick={() => setCurrentPage('work')} className="text-left text-white font-black uppercase tracking-widest text-sm">Work</button>
-                <button onClick={() => setCurrentPage('events')} className="text-left text-white font-black uppercase tracking-widest text-sm">Events</button>
-                <button onClick={() => setCurrentPage('contact')} className="text-left text-[#C1F7DC] font-black uppercase tracking-widest text-sm">Partnership</button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              <item.icon size={18} />
+              {currentPage === item.id && (
+                <span className="text-[8px] font-black uppercase tracking-widest leading-none">
+                  {item.label}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
       </nav>
 
       <main>
@@ -1370,7 +1385,7 @@ export default function App() {
 
           {currentPage === 'contact' && (
             <motion.div key="contact" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-              <div className="pt-64 pb-48 px-6 bg-[#FEF6F4] min-h-screen text-center">
+              <div className="pt-32 pb-48 px-6 bg-[#FEF6F4] min-h-screen text-center">
                 <h1 className="text-6xl md:text-8xl font-black mb-12 tracking-tighter leading-tight text-[#0D0D15] italic uppercase">Apply <span className="text-[#F03A47]">Directly.</span></h1>
                 
                 <div className="flex flex-col md:flex-row items-center justify-center gap-8 mb-16 text-[#0D0D15] font-black uppercase tracking-widest text-xs">
