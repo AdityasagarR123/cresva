@@ -14,15 +14,23 @@ export const portfolioData: PortfolioProject[] = [
     type: 'website',
     title: 'Luxe Dining Experience',
     description: 'High-performance digital menu and reservation system with real-time analytics.',
-    youtubeUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ', // Replace with your Unlisted YouTube URL
+    youtubeUrl: 'https://youtube.com/shorts/3iNUzDrVKGs?feature=share', // Replace with your Unlisted YouTube URL
     tags: ['React', 'Node.js', 'QR Integration']
   },
   {
     id: '2',
     type: 'ad',
-    title: 'adshoot for cafe',
+    title: 'Cafe Branding',
     description: 'Viral short-form ad campaign that generated 500k+ local impressions in 14 days.',
     youtubeUrl: 'https://youtube.com/shorts/sWFFewNpdWk?si=aYCI9f42V-EtRuRQ', // Replace with your Unlisted YouTube URL
+    tags: ['Motion Graphics', 'Meta Ads', 'Viral Strategy']
+  },
+  {
+    id: '3',
+    type: 'ad',
+    title: 'adshoot for cafe',
+    description: 'Viral short-form ad campaign that generated 500k+ local impressions in 14 days.',
+    youtubeUrl: 'https://youtube.com/shorts/q40ma3ASmGc?feature=share', // Replace with your Unlisted YouTube URL
     tags: ['Motion Graphics', 'Meta Ads', 'Viral Strategy']
   }
 ];
