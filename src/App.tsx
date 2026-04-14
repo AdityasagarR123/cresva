@@ -195,19 +195,19 @@ const Hero: React.FC<HeroProps> = ({ onContactClick, onEcosystemClick }) => {
   }, []);
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-[#0D0D15]">
+    <div className="relative w-full h-screen md:h-screen lg:h-screen min-h-[100dvh] overflow-hidden bg-[#0D0D15]">
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full object-cover touch-none opacity-70" />
-      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center pt-16 md:pt-28 text-white px-6 text-center">
+      <div className="absolute inset-0 z-10 flex flex-col items-center justify-start pt-14 md:justify-center md:pt-28 text-white px-6 text-center">
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
           <div className="flex items-center gap-2 px-6 py-2 bg-[#C1F7DC]/10 backdrop-blur-md border border-[#C1F7DC]/20 rounded-full text-[10px] font-black tracking-[0.4em] text-[#C1F7DC] uppercase">
             Cresva Performance Agency
           </div>
         </motion.div>
-        <div className="space-y-8 max-w-5xl mx-auto">
+        <div className="space-y-4 md:space-y-8 max-w-5xl mx-auto">
           <motion.h1 
             initial={{ opacity: 0, scale: 0.98 }} 
             animate={{ opacity: 1, scale: 1 }}
-            className="text-5xl md:text-7xl lg:text-[5.5rem] font-black tracking-tight leading-[1.05] bg-gradient-to-br from-white via-[#C1F7DC] to-[#999AC6] bg-clip-text text-transparent uppercase"
+            className="text-4xl sm:text-5xl md:text-7xl lg:text-[5.5rem] font-black tracking-tight leading-[1.05] bg-gradient-to-br from-white via-[#C1F7DC] to-[#999AC6] bg-clip-text text-transparent uppercase"
           >
             Performance for <br />
             <span className="text-[#C1F7DC] italic font-serif tracking-normal lowercase opacity-90">modern brands</span>
@@ -221,7 +221,7 @@ const Hero: React.FC<HeroProps> = ({ onContactClick, onEcosystemClick }) => {
             Cresva engineers the digital ecosystem your brand needs to dominate the market while you focus on your craft.
           </motion.p>
           
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }} className="flex flex-col sm:flex-row gap-5 justify-center mt-12">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }} className="flex flex-col sm:flex-row gap-5 justify-center mt-6 md:mt-12">
             <button onClick={onContactClick} className="group px-10 py-5 bg-[#C1F7DC] hover:bg-white text-[#0D0D15] rounded-full font-black text-base transition-all shadow-2xl shadow-[#C1F7DC]/10 flex items-center gap-3 active:scale-95">
               Scale Your Brand <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
             </button>
@@ -1055,7 +1055,7 @@ const HomePageContent: React.FC<HomePageContentProps> = ({ setCurrentPage }) => 
         <div className="absolute bottom-[15%] right-[8%] w-[400px] h-[400px] bg-[#F03A47]/[0.03] blur-[180px] rounded-full pointer-events-none" />
 
         {/* ═══════════ GLASSMORPHISM HERO ═══════════ */}
-        <div className="relative z-10 mx-auto max-w-7xl px-6 pt-14 pb-14 md:pt-40 md:pb-24">
+        <div className="relative z-10 mx-auto max-w-7xl px-6 pt-12 md:pt-40 pb-14 md:pb-24">
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-10 items-start">
             
             {/* --- LEFT COLUMN (Copy) --- */}
